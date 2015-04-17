@@ -1,2 +1,3 @@
-# akka-streams
-Exercises and sample usage of akka-streams.
+# code-jam
+
+Solutions of Google Code Jam challenges.
