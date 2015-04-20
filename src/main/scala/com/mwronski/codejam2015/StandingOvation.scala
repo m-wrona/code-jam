@@ -29,15 +29,16 @@ trait StandingOvation {
    */
   final def check(audience: Array[Int]): Int = {
     var peopleUp = audience(0)
-    var missing = 0
-    for (shyness <- 1 until audience.length) {
-      if (shyness >= peopleUp) {
-        peopleUp += audience(shyness)
-      } else {
-        missing += (shyness - peopleUp)
+    var totalMissing = 0
+    for (shyness <- 1 until audience.length if audience(shyness) != 0) {
+      if (peopleUp < shyness) {
+        val missing = (shyness - peopleUp)
+        totalMissing += missing
+        peopleUp += missing //assume they got up and clap
       }
+      peopleUp += audience(shyness)
     }
-    missing
+    totalMissing
   }
 
 }

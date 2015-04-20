@@ -11,11 +11,11 @@ import scala.io.Source
  */
 object StandingOvationDemo extends StandingOvation {
 
-  val files = List("doc/2015/standing_ovation/A-small-practice.in")
+  val files = List("doc/2015/standing_ovation/A-small-practice.in", "doc/2015/standing_ovation/A-large-practice.in")
 
   def main(args: Array[String]) {
     for (file <- files) {
-      println("************************* %s ************************".format(file))
+      println("\n************************* %s ************************\n".format(file))
       demo(file)
     }
   }

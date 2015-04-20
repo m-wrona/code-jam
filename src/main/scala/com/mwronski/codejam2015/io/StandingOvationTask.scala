@@ -23,7 +23,7 @@ object StandingOvationTask {
    * @return non-nullable iterator with parsing results
    */
   def apply(data: Iterator[String]): Iterator[Either[String, StandingOvationTask]] = {
-    data.next() //skip first line
+    data.next() //skip first line with number of test cases
     data.map(
       row => {
         val data = row.split(" ")
@@ -32,7 +32,7 @@ object StandingOvationTask {
         } else {
           try {
             val maxShyness = data(0).toInt
-            val audience = data(1).toCharArray.map(_.toInt)
+            val audience = data(1).toCharArray.map(_.asDigit)
             val expectedAudience = audience.length - 1
             if (maxShyness != expectedAudience) {
               Left("Couldn't parse line '%s' - max shyness level '%d' different then audience length '%d'".format(row, maxShyness, expectedAudience))
