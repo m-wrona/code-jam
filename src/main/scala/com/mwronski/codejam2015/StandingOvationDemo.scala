@@ -11,7 +11,10 @@ import scala.io.Source
  */
 object StandingOvationDemo extends StandingOvation {
 
-  val files = List("doc/2015/standing_ovation/A-small-practice.in", "doc/2015/standing_ovation/A-large-practice.in")
+  val files = List(
+    "doc/2015/standing_ovation/A-small-practice.in",
+    "doc/2015/standing_ovation/A-large-practice.in"
+  )
 
   def main(args: Array[String]) {
     for (file <- files) {
@@ -24,7 +27,7 @@ object StandingOvationDemo extends StandingOvation {
    * Execute all tasks in given file
    * @param file file which tasks should be executed
    */
-  def demo(file: String) = {
+  private def demo(file: String) = {
     var nr = 1
     for (
       task <- StandingOvationTask(Source.fromFile(file).getLines())
