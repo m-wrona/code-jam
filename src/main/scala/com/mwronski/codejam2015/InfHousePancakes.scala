@@ -39,27 +39,32 @@ trait InfHousePancakes {
     val pancakesCount = persons
       .groupBy(pancakes => pancakes)
       .mapValues(persons => persons.length)
-    val min = pancakesCount.min._1
-    if (min < minSplit) {
-      min
+    val max = pancakesCount.max._1
+    if (max < minSplit) {
+      //costs below split limit - min value is optimum
+      max
     } else {
-      splitPancakes(pancakesCount)
+      //divide and conquer
+      splitPancakes(pancakesCount, minSplit until max)
     }
   }
 
   /**
    * Check how quickly pancakes can be eaten while split among persons
    * @param pancakesCount number of pancakes (key) grouped by persons (value) who have to eat them
+   * @param limits split limits for which number of turns should be checked
    * @return non-negative number of turns
    */
-  private def splitPancakes(pancakesCount: Map[Int, Int]): Int = {
-    val turns =
-      for (limit <- minSplit to pancakesCount.max._1)
-      yield pancakesCount
-        //check how quickly pancakes will be eaten using given limit
-        .map(pancakes => ((pancakes._1 - 1) / limit) * pancakes._2)
-        .sum
-    turns.min
-  }
+  private def splitPancakes(pancakesCount: Map[Int, Int], limits: Iterable[Int]): Int =
+    limits
+      .map(
+        limit => {
+          pancakesCount
+            //check how quickly pancakes will be eaten using given limit
+            .map(pancakes => ((pancakes._1 - 1) / limit) * pancakes._2)
+            .sum
+        }
+      )
+      .min
 
 }
