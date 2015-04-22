@@ -74,14 +74,13 @@ trait Dijkstra {
       false
     }
     for (
-      i <- 0 until text.length;
-      j <- 1 until text.length if j > i;
-      k <- 2 until text.length if k > i && k > j
+      i <- 1 until text.length;
+      j <- 2 until text.length if j > i
     ) {
       if (
-        canReduceTo('i', text, i, j)
-          && canReduceTo('j', text, j, k)
-          && canReduceTo('k', text, k, text.length)
+        canReduceTo('i', text, 0, i)
+          && canReduceTo('j', text, i, j)
+          && canReduceTo('k', text, j, text.length)
       ) {
         return true
       }
