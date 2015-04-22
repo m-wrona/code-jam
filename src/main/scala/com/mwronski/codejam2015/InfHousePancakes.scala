@@ -45,7 +45,7 @@ trait InfHousePancakes {
       max
     } else {
       //divide and conquer
-      splitPancakes(pancakesCount, minSplit until max)
+      splitPancakes(pancakesCount, 2 to max)
     }
   }
 
@@ -59,7 +59,7 @@ trait InfHousePancakes {
     limits
       .map(
         limit => {
-          pancakesCount
+          limit + pancakesCount
             //check how quickly pancakes will be eaten using given limit
             .map(pancakes => ((pancakes._1 - 1) / limit) * pancakes._2)
             .sum
