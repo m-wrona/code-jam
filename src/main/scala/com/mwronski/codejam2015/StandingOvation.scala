@@ -17,7 +17,7 @@ package com.mwronski.codejam2015
  * What is the minimum number of friends that you need to invite to guarantee a standing ovation?
  *
  *
- * @see https://code.google.com/codejam/contest/6224486/dashboard
+ * @see https://code.google.com/codejam/contest/6224486/dashboard#s=p0
  * @author Michal Wronski
  */
 trait StandingOvation {
