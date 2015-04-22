@@ -1,5 +1,6 @@
 package com.mwronski.codejam2015
 
+import com.mwronski.test.TestUtils
 import org.scalatest.{Matchers, GivenWhenThen, FunSpec}
 
 import scala.io.Source
@@ -10,7 +11,7 @@ import scala.io.Source
  * @see InfHousePancakes
  * @author Michal Wronski
  */
-class InfHousePancakesTest extends FunSpec with GivenWhenThen with Matchers
+class InfHousePancakesTest extends FunSpec with GivenWhenThen with Matchers with TestUtils
 with InfHousePancakes {
 
   describe("2015-B: Infinite House of Pancakes") {
@@ -62,8 +63,7 @@ with InfHousePancakes {
 
         Then("all tasks are solved correctly")
         var nr = 0
-        for (tc <- out) {
-          val expected = tc.split(":")(1).trim.toInt
+        for (expected <- parseResults(out)) {
           solutions(nr) should be(expected)
           nr += 1
         }
@@ -86,8 +86,7 @@ with InfHousePancakes {
 
         Then("all tasks are solved correctly")
         var nr = 0
-        for (tc <- out) {
-          val expected = tc.split(":")(1).trim.toInt
+        for (expected <- parseResults(out)) {
           solutions(nr) should be(expected)
           nr += 1
         }
