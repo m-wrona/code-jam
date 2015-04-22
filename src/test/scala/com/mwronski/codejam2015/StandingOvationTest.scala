@@ -81,7 +81,7 @@ with StandingOvation {
       }
 
       it("Should solve large tasks") {
-        Given("small tasks")
+        Given("large tasks")
         val in = StandingOvationTask(Source.fromFile("src/test/resources/2015/A-large-practice.in").getLines())
         And("solutions for large tasks ")
         val out = Source.fromFile("src/test/resources/2015/A-large-practice.out").getLines()
