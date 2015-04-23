@@ -29,12 +29,24 @@ package com.mwronski.codejam2015
  * and -k * j is i, so jij reduces to i.) If this is possible, you will get your point back.
  * Can you find a way to do it?
  *
+ * Solution note:
+ * 1. i*j*k = -1
+ * 2. j*i*k = 1
+ * 3. k*i*j = -1
+ * 4. k*j*i = 1
+ * 5. i*k*j = 1
+ * 6. j*k*i = -1
+ * Thus the best is to check whether whole string gives -1.
+ * If yes only positions of i,j,k must be checked: Pi<Pj<Pk
  *
  * @see https://code.google.com/codejam/contest/6224486/dashboard#s=p2
  * @author Michal Wronski
  */
 trait Dijkstra {
 
+  /**
+   * Quaternions multiplicative structure
+   */
   private val quaternions = Map(
     "1" -> Map(
       "1" -> "1",
@@ -64,39 +76,59 @@ trait Dijkstra {
   )
 
   /**
+   * i*j*k=-1
+   */
+  private val ijk = "-1"
+
+  /**
    * Check whether given text can be reduced to ijk
    * @param text text to be reduced
    * @return check result
    */
   final def canReduce(text: String): Boolean = {
-    if (text.length < 3) {
-      //text is too short to be reduced
+    if (
+      text.length >= 3
+        && canReduceTo(ijk, text, 0, text.length)
+    ) {
+      return tryReduceTo("i", text, 0, text.length)
+        .flatMap(
+          Pi => {
+            tryReduceTo("j", text, Pi, text.length)
+              .map(Pj => Pj < text.length)
+          }
+        )
+        .getOrElse(false)
+    } else {
       false
     }
-    for (
-      i <- 1 until text.length;
-      j <- 2 until text.length if j > i
-    ) {
-      if (
-        canReduceTo('i', text, 0, i)
-          && canReduceTo('j', text, i, j)
-          && canReduceTo('k', text, j, text.length)
-      ) {
-        return true
+  }
+
+  /**
+   * Try reduce text to expecting result and return end index when result is fulfilled
+   * @param expected expected result
+   * @param text whole text
+   * @param from start index
+   * @param to max end index
+   * @return non-nullable option of found end index when expected result has been fulfilled
+   */
+  private def tryReduceTo(expected: String, text: String, from: Int, to: Int): Option[Int] = {
+    for (i <- from until to) {
+      if (canReduceTo(expected, text, from, i)) {
+        return Some(i)
       }
     }
-    false
+    None
   }
 
   /**
    * Check whether part of text can be reduced to given char according to quaternion
-   * @param char char to which sub-text should be reduced
+   * @param expected expected result of reducing
    * @param text whole text
    * @param from start index
    * @param to end index
    * @return check result
    */
-  private def canReduceTo(char: Char, text: String, from: Int, to: Int): Boolean = {
+  private def canReduceTo(expected: String, text: String, from: Int, to: Int): Boolean = {
     var result = "1"
     var negative = false
     for (c <- text.substring(from, to).toCharArray) {
@@ -109,7 +141,7 @@ trait Dijkstra {
     if (negative) {
       result = "-" + result
     }
-    char.toString.equals(result)
+    expected.equals(result)
   }
 
 
