@@ -83,18 +83,20 @@ trait Dijkstra {
   /**
    * Check whether given text can be reduced to ijk
    * @param text text to be reduced
+   * @param repeated repeat text n-times (needed for extremely long text that's hard to keep in-memory)
    * @return check result
    */
-  final def canReduce(text: String): Boolean = {
+  final def canReduce(text: Array[Char], repeated: Long = 1): Boolean = {
+    val textLength: Long = text.length * repeated
     if (
-      text.length >= 3
-        && canReduceTo(ijk, text, 0, text.length)
+      textLength >= 3
+        && ijk.equals(reduce(text, 0, textLength))
     ) {
-      return tryReduceTo("i", text, 0, text.length)
+      return tryReduceTo("i", text, 0, textLength)
         .flatMap(
           Pi => {
-            tryReduceTo("j", text, Pi, text.length)
-              .map(Pj => Pj < text.length)
+            tryReduceTo("j", text, Pi + 1, textLength)
+              .map(Pj => Pj < textLength)
           }
         )
         .getOrElse(false)
@@ -111,9 +113,11 @@ trait Dijkstra {
    * @param to max end index
    * @return non-nullable option of found end index when expected result has been fulfilled
    */
-  private def tryReduceTo(expected: String, text: String, from: Int, to: Int): Option[Int] = {
+  private def tryReduceTo(expected: String, text: Array[Char], from: Long, to: Long): Option[Long] = {
+    var result = "1"
     for (i <- from until to) {
-      if (canReduceTo(expected, text, from, i)) {
+      result = reduce(text, i, i + 1, result)
+      if (expected.equals(result)) {
         return Some(i)
       }
     }
@@ -121,28 +125,38 @@ trait Dijkstra {
   }
 
   /**
-   * Check whether part of text can be reduced to given char according to quaternion
-   * @param expected expected result of reducing
+   * Reduce given part of text according to quaternion
    * @param text whole text
    * @param from start index
    * @param to end index
-   * @return check result
+   * @param init init value before reduce start
+   * @return non-null results
    */
-  private def canReduceTo(expected: String, text: String, from: Int, to: Int): Boolean = {
-    var result = "1"
+  private def reduce(text: Array[Char], from: Long, to: Long, init: String = "1"): String = {
+    //init
+    var result = init
     var negative = false
-    for (c <- text.substring(from, to).toCharArray) {
-      result = quaternions.get(result).get.get(c.toString).get
+    val checkNegative = () => {
       if (result(0) == '-') {
         result = result(1).toString
         negative ^= true
       }
     }
-    if (negative) {
-      result = "-" + result
+    //reduce sub-text
+    checkNegative()
+    var i: Long = from
+    while (i < to) {
+      val c = text((i % text.length).toInt)
+      result = quaternions.get(result).get.get(c.toString).get
+      checkNegative()
+      i += 1
     }
-    expected.equals(result)
+    //return result
+    if (negative) {
+      "-" + result
+    } else {
+      result
+    }
   }
-
 
 }

@@ -18,43 +18,51 @@ with Dijkstra {
     describe("Sample tasks") {
 
       it("Should check: i") {
-        canReduce("i") should be(false)
+        canReduce("i".toCharArray) should be(false)
       }
 
       it("Should check: ij") {
-        canReduce("ij") should be(false)
+        canReduce("ij".toCharArray) should be(false)
       }
 
       it("Should check: ijk") {
-        canReduce("ijk") should be(true)
+        canReduce("ijk".toCharArray) should be(true)
       }
 
       it("Should check: jik") {
-        canReduce("jik") should be(false)
+        canReduce("jik".toCharArray) should be(false)
       }
 
       it("Should check: kij") {
-        canReduce("kij") should be(false)
+        canReduce("kij".toCharArray) should be(false)
       }
 
       it("Should check: kji") {
-        canReduce("kji") should be(false)
+        canReduce("kji".toCharArray) should be(false)
       }
 
       it("Should check: ikj") {
-        canReduce("ikj") should be(false)
+        canReduce("ikj".toCharArray) should be(false)
       }
 
       it("Should check: jki") {
-        canReduce("jki") should be(false)
+        canReduce("jki".toCharArray) should be(false)
+      }
+
+      it("Should check: ji x 6") {
+        canReduce("ji".toCharArray, 6) should be(true)
       }
 
       it("Should check: jijijijijiji") {
-        canReduce("jijijijijiji") should be(true)
+        canReduce("jijijijijiji".toCharArray) should be(true)
       }
 
       it("Should check: kkkkkk") {
-        canReduce("kkkkkk") should be(false)
+        canReduce("kkkkkk".toCharArray) should be(false)
+      }
+
+      it("Should check: i x 100") {
+        canReduce("i".toCharArray, 100) should be(false)
       }
 
     }
@@ -72,12 +80,9 @@ with Dijkstra {
         val solutions = scala.collection.mutable.ArrayBuffer[String]()
         while (in.hasNext) {
           val lx = in.next().split(" ")
-          val part = in.next()
-          var string = ""
-          for (i <- 0 until lx(1).toInt) {
-            string += part
-          }
-          solutions += (if (canReduce(string)) "YES" else "NO")
+          val text = in.next().toCharArray
+          val x = lx(1).toInt
+          solutions += (if (canReduce(text, x)) "YES" else "NO")
         }
 
         Then("all tasks are solved correctly")
@@ -87,37 +92,33 @@ with Dijkstra {
           nr += 1
         }
       }
-    }
 
-    //TODO: walking through strings must be optimized in order to enable large tasks
-//    it("Should solve large tasks") {
-//      Given("large tasks")
-//      val in = Source.fromFile("src/test/resources/2015/C-large-practice.in").getLines()
-//      in.next() //skip number of test cases
-//      And("solutions for large tasks ")
-//      val out = Source.fromFile("src/test/resources/2015/C-large-practice.out").getLines()
-//
-//      When("solving large tasks")
-//      val solutions = scala.collection.mutable.ArrayBuffer[String]()
-//      while (in.hasNext) {
-//        val lx = in.next().split(" ")
-//        val part = in.next()
-//        var string = ""
-//        var i: Long = 0
-//        while (i < lx(1).toLong) {
-//          string += part
-//          i = 1
-//        }
-//        solutions += (if (canReduce(string)) "YES" else "NO")
-//      }
-//
-//      Then("all tasks are solved correctly")
-//      var nr = 0
-//      for (expected <- out.map(_.split(":")(1).trim)) {
-//        solutions(nr) should be(expected)
-//        nr += 1
-//      }
-//    }
+
+      //      it("Should solve large tasks") {
+      //        Given("large tasks")
+      //        val in = Source.fromFile("src/test/resources/2015/C-large-practice.in").getLines()
+      //        in.next() //skip number of test cases
+      //        And("solutions for large tasks ")
+      //        val out = Source.fromFile("src/test/resources/2015/C-large-practice.out").getLines()
+      //
+      //        When("solving large tasks")
+      //        val solutions = scala.collection.mutable.ArrayBuffer[String]()
+      //        while (in.hasNext) {
+      //          val lx = in.next().split(" ")
+      //          val text = in.next().toCharArray
+      //          val x = lx(1).toLong
+      //          solutions += (if (canReduce(text, x)) "YES" else "NO")
+      //        }
+      //
+      //        Then("all tasks are solved correctly")
+      //        var nr = 0
+      //        for (expected <- out.map(_.split(":")(1).trim)) {
+      //          solutions(nr) should be(expected)
+      //          nr += 1
+      //        }
+      //      }
+
+    }
 
   }
 
