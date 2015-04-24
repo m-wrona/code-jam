@@ -93,30 +93,30 @@ with Dijkstra {
         }
       }
 
+      it("Should solve large tasks") {
+        Given("large tasks")
+        val in = Source.fromFile("src/test/resources/2015/C-large-practice.in").getLines()
+        in.next() //skip number of test cases
+        And("solutions for large tasks ")
+        val out = Source.fromFile("src/test/resources/2015/C-large-practice.out").getLines()
 
-      //      it("Should solve large tasks") {
-      //        Given("large tasks")
-      //        val in = Source.fromFile("src/test/resources/2015/C-large-practice.in").getLines()
-      //        in.next() //skip number of test cases
-      //        And("solutions for large tasks ")
-      //        val out = Source.fromFile("src/test/resources/2015/C-large-practice.out").getLines()
-      //
-      //        When("solving large tasks")
-      //        val solutions = scala.collection.mutable.ArrayBuffer[String]()
-      //        while (in.hasNext) {
-      //          val lx = in.next().split(" ")
-      //          val text = in.next().toCharArray
-      //          val x = lx(1).toLong
-      //          solutions += (if (canReduce(text, x)) "YES" else "NO")
-      //        }
-      //
-      //        Then("all tasks are solved correctly")
-      //        var nr = 0
-      //        for (expected <- out.map(_.split(":")(1).trim)) {
-      //          solutions(nr) should be(expected)
-      //          nr += 1
-      //        }
-      //      }
+        When("solving large tasks")
+        val solutions = scala.collection.mutable.ArrayBuffer[String]()
+        while (in.hasNext) {
+          val lx = in.next().split(" ")
+          val text = in.next().toCharArray
+          val x = lx(1).toLong
+          solutions += (if (canReduce(text, x)) "YES" else "NO")
+        }
+
+        Then("all tasks are solved correctly")
+        var nr = 0
+        for (expected <- out.map(_.split(":")(1).trim)) {
+          println(nr)
+          solutions(nr) should be(expected)
+          nr += 1
+        }
+      }
 
     }
 

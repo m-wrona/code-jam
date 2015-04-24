@@ -42,7 +42,7 @@ package com.mwronski.codejam2015
  * @see https://code.google.com/codejam/contest/6224486/dashboard#s=p2
  * @author Michal Wronski
  */
-trait Dijkstra {
+trait Dijkstra extends Quaternions {
 
   /**
    * Quaternions multiplicative structure
@@ -78,7 +78,7 @@ trait Dijkstra {
   /**
    * i*j*k=-1
    */
-  private val ijk = "-1"
+  private val ijk = -1
 
   /**
    * Check whether given text can be reduced to ijk
@@ -87,15 +87,19 @@ trait Dijkstra {
    * @return check result
    */
   final def canReduce(text: Array[Char], repeated: Long = 1): Boolean = {
+    //count whole result - as text is repeated up to 3 mult must be made
+    val part = reduce(text, 0, text.length)
+    var all = part
+    for (i <- 1 until (repeated % 4).toInt) {
+      all = multiply(all, part)
+    }
+    //check whole result and check indexes if needed
     val textLength: Long = text.length * repeated
-    if (
-      textLength >= 3
-        && ijk.equals(reduce(text, 0, textLength))
-    ) {
-      return tryReduceTo("i", text, 0, textLength)
+    if (all == ijk) {
+      return tryReduceTo('i', text, 0, textLength)
         .flatMap(
           Pi => {
-            tryReduceTo("j", text, Pi + 1, textLength)
+            tryReduceTo('j', text, Pi + 1, textLength)
               .map(Pj => Pj < textLength)
           }
         )
@@ -113,13 +117,15 @@ trait Dijkstra {
    * @param to max end index
    * @return non-nullable option of found end index when expected result has been fulfilled
    */
-  private def tryReduceTo(expected: String, text: Array[Char], from: Long, to: Long): Option[Long] = {
-    var result = "1"
-    for (i <- from until to) {
+  private def tryReduceTo(expected: Char, text: Array[Char], from: Long, to: Long): Option[Long] = {
+    var result = 1
+    var i: Long = from
+    while (i < to) {
       result = reduce(text, i, i + 1, result)
-      if (expected.equals(result)) {
+      if (toQuaternion(expected) == result) {
         return Some(i)
       }
+      i += 1
     }
     None
   }
@@ -132,31 +138,66 @@ trait Dijkstra {
    * @param init init value before reduce start
    * @return non-null results
    */
-  private def reduce(text: Array[Char], from: Long, to: Long, init: String = "1"): String = {
-    //init
+  private def reduce(text: Array[Char], from: Long, to: Long, init: Int = 1): Int = {
     var result = init
-    var negative = false
-    val checkNegative = () => {
-      if (result(0) == '-') {
-        result = result(1).toString
-        negative ^= true
-      }
-    }
-    //reduce sub-text
-    checkNegative()
     var i: Long = from
     while (i < to) {
       val c = text((i % text.length).toInt)
-      result = quaternions.get(result).get.get(c.toString).get
-      checkNegative()
+      result = multiply(result, toQuaternion(c))
       i += 1
     }
-    //return result
-    if (negative) {
-      "-" + result
-    } else {
+    result
+  }
+
+}
+
+/**
+ * Quaternions and related rules
+ */
+sealed trait Quaternions {
+
+  import scala.math.abs
+
+  private val i = 2
+  private val j = 3
+  private val k = 4
+
+  private val mult = Array(
+    Array(0, 0, 0, 0, 0), //dummy for indexing
+    Array(0, 1, i, j, k), //1
+    Array(0, i, -1, k, -j), //i
+    Array(0, j, -k, -1, i), //j
+    Array(0, k, j, -i, -1) //k
+  )
+
+  /**
+   * Multiply quaternions
+   * @param x 1st quaternion
+   * @param y  2nd quaternion
+   * @return result
+   */
+  final def multiply(x: Int, y: Int): Int = {
+    val result = mult(abs(x))(abs(y))
+    if (x * y > 0) {
       result
+    } else {
+      -result
     }
   }
+
+  /**
+   * Multiply quaternions
+   * @param x char representation of 1st quaternion
+   * @param y char representation of 2nd quaternion
+   * @return result
+   */
+  final def multiply(x: Char, y: Char): Int = multiply(toQuaternion(x), toQuaternion(y))
+
+  /**
+   * Convert char into quaternion according to multiplicative table
+   * @param c char
+   * @return quaternion value
+   */
+  final def toQuaternion(c: Char): Int = c.toInt - ('i'.toInt - 2)
 
 }
