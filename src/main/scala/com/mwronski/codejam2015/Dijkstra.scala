@@ -51,14 +51,14 @@ trait Dijkstra extends Quaternions {
 
   /**
    * Check whether given text can be reduced to ijk
-   * @param text text to be reduced
+   * @param text valid text to be reduced
    * @param repeated repeat text n-times (needed for extremely long text that's hard to keep in-memory)
    * @return check result
    */
   final def canReduce(text: Array[Char], repeated: Long = 1): Boolean = {
     //count whole result - as text is repeated up to 3 mul must be made
     val limit: Int = 4
-    val part = text.foldLeft(1)((v: Int, c: Char) => multiply(v, toQuaternion(c)))
+    val part = text.foldLeft(1)((v: Int, c: Char) => multiply(v, Quaternions(c)))
     val all = (0 until (repeated % limit).toInt).foldLeft(1)((total, i) => multiply(total, part))
     //check whole result and check indexes if needed
     if (all == ijk) {
@@ -88,12 +88,12 @@ trait Dijkstra extends Quaternions {
    * @return non-nullable option of found start index
    */
   private def matchFwd(expected: Char, text: Array[Char], times: Int): Option[Int] = {
-    val out = toQuaternion(expected)
+    val out = Quaternions(expected)
     var result = 1
     for (n <- 0 until times) {
       for (i <- 0 until text.length) {
         val c = text(i)
-        result = multiply(result, toQuaternion(c))
+        result = multiply(result, Quaternions(c))
         if (out == result) {
           return Some((n * text.length) + i)
         }
@@ -110,12 +110,12 @@ trait Dijkstra extends Quaternions {
    * @return non-nullable option of found index counting from the end
    */
   private def matchBwd(expected: Char, text: Array[Char], times: Int = 1): Option[Int] = {
-    val out = toQuaternion(expected)
+    val out = Quaternions(expected)
     var result = 1
     for (n <- 0 until times) {
       for (i <- 1 to text.length) {
         val c = text(text.length - i)
-        result = multiply(toQuaternion(c), result)
+        result = multiply(Quaternions(c), result)
         if (out == result) {
           return Some((n * text.length) + i)
         }
@@ -129,13 +129,11 @@ trait Dijkstra extends Quaternions {
 /**
  * Quaternions and related rules
  */
-sealed trait Quaternions {
+object Quaternions {
 
-  import scala.math.abs
-
-  private val i = toQuaternion('i')
-  private val j = toQuaternion('j')
-  private val k = toQuaternion('k')
+  val i = apply('i')
+  val j = apply('j')
+  val k = apply('k')
 
   private val mult = Array(
     Array(0, 0, 0, 0, 0), //dummy for indexing
@@ -144,6 +142,20 @@ sealed trait Quaternions {
     Array(0, j, -k, -1, i), //j
     Array(0, k, j, -i, -1) //k
   )
+
+  /**
+   * Convert char into quaternion according to multiplicative table
+   * @param c char representation of quaternion
+   * @return quaternion value
+   */
+  final def apply(c: Char): Int = c.toInt - ('i'.toInt - 2)
+
+}
+
+sealed trait Quaternions {
+
+  import Quaternions._
+  import scala.math.abs
 
   /**
    * Multiply quaternions
@@ -159,12 +171,5 @@ sealed trait Quaternions {
       -result
     }
   }
-
-  /**
-   * Convert char into quaternion according to multiplicative table
-   * @param c char representation of quaternion
-   * @return quaternion value
-   */
-  final def toQuaternion(c: Char): Int = c.toInt - ('i'.toInt - 2)
 
 }
