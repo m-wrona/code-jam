@@ -45,37 +45,6 @@ package com.mwronski.codejam2015
 trait Dijkstra extends Quaternions {
 
   /**
-   * Quaternions multiplicative structure
-   */
-  private val quaternions = Map(
-    "1" -> Map(
-      "1" -> "1",
-      "i" -> "i",
-      "j" -> "j",
-      "k" -> "k"
-    ),
-    "i" -> Map(
-      "1" -> "i",
-      "i" -> "-1",
-      "j" -> "k",
-      "k" -> "-j"
-    ),
-    "j" -> Map(
-      "1" -> "j",
-      "i" -> "-k",
-      "j" -> "-1",
-      "k" -> "i"
-    )
-    ,
-    "k" -> Map(
-      "1" -> "k",
-      "i" -> "j",
-      "j" -> "-i",
-      "k" -> "-1"
-    )
-  )
-
-  /**
    * i*j*k=-1
    */
   private val ijk = -1
@@ -90,7 +59,7 @@ trait Dijkstra extends Quaternions {
     //count whole result - as text is repeated up to 3 mul must be made
     val limit: Int = 4
     val part = text.foldLeft(1)((v: Int, c: Char) => multiply(v, toQuaternion(c)))
-    val all = pow(part, (repeated % limit).toInt)
+    val all = (0 until (repeated % limit).toInt).foldLeft(1)((total, i) => multiply(total, part))
     //check whole result and check indexes if needed
     if (all == ijk) {
       return matchFwd('i', text, limit)
@@ -189,20 +158,6 @@ sealed trait Quaternions {
     } else {
       -result
     }
-  }
-
-  /**
-   * Power value
-   * @param value value
-   * @param n power value
-   * @return result
-   */
-  final def pow(value: Int, n: Int) = {
-    var all = 1
-    for (i <- 0 until n) {
-      all = multiply(all, value)
-    }
-    all
   }
 
   /**
