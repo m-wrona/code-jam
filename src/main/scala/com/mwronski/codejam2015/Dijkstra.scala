@@ -87,20 +87,22 @@ trait Dijkstra extends Quaternions {
    * @return check result
    */
   final def canReduce(text: Array[Char], repeated: Long = 1): Boolean = {
-    //count whole result - as text is repeated up to 3 mult must be made
-    val part = reduce(text, 0, text.length)
-    var all = part
-    for (i <- 1 until (repeated % 4).toInt) {
-      all = multiply(all, part)
-    }
+    //count whole result - as text is repeated up to 3 mul must be made
+    val limit: Int = 4
+    val part = text.foldLeft(1)((v: Int, c: Char) => multiply(v, toQuaternion(c)))
+    val all = pow(part, (repeated % limit).toInt)
     //check whole result and check indexes if needed
-    val textLength: Long = text.length * repeated
     if (all == ijk) {
-      return tryReduceTo('i', text, 0, textLength)
+      return matchFwd('i', text, limit)
         .flatMap(
           Pi => {
-            tryReduceTo('j', text, Pi + 1, textLength)
-              .map(Pj => Pj < textLength)
+            matchBwd('k', text, limit)
+              .map(
+                Pk => {
+                  val totalPk = (text.length * repeated) - Pk
+                  Pi < totalPk
+                }
+              )
           }
         )
         .getOrElse(false)
@@ -110,43 +112,47 @@ trait Dijkstra extends Quaternions {
   }
 
   /**
-   * Try reduce text to expecting result and return end index when result is fulfilled
-   * @param expected expected result
-   * @param text whole text
-   * @param from start index
-   * @param to max end index
-   * @return non-nullable option of found end index when expected result has been fulfilled
+   * Try to match forward text to expected result
+   * @param expected expected quaternion
+   * @param text text to be matched
+   * @param times number text repetition that can be checked
+   * @return non-nullable option of found start index
    */
-  private def tryReduceTo(expected: Char, text: Array[Char], from: Long, to: Long): Option[Long] = {
+  private def matchFwd(expected: Char, text: Array[Char], times: Int): Option[Int] = {
+    val out = toQuaternion(expected)
     var result = 1
-    var i: Long = from
-    while (i < to) {
-      result = reduce(text, i, i + 1, result)
-      if (toQuaternion(expected) == result) {
-        return Some(i)
+    for (n <- 0 until times) {
+      for (i <- 0 until text.length) {
+        val c = text(i)
+        result = multiply(result, toQuaternion(c))
+        if (out == result) {
+          return Some((n * text.length) + i)
+        }
       }
-      i += 1
     }
     None
   }
 
   /**
-   * Reduce given part of text according to quaternion
-   * @param text whole text
-   * @param from start index
-   * @param to end index
-   * @param init init value before reduce start
-   * @return non-null results
+   * Try to match backward text to expected result
+   * @param expected expected quaternion
+   * @param text text to be matched
+   * @param times number text repetition that can be checked
+   * @return non-nullable option of found index counting from the end
    */
-  private def reduce(text: Array[Char], from: Long, to: Long, init: Int = 1): Int = {
-    var result = init
-    var i: Long = from
-    while (i < to) {
-      val c = text((i % text.length).toInt)
-      result = multiply(result, toQuaternion(c))
-      i += 1
+  private def matchBwd(expected: Char, text: Array[Char], times: Int = 1): Option[Int] = {
+    val out = toQuaternion(expected)
+    var result = 1
+    for (n <- 0 until times) {
+      for (i <- 1 to text.length) {
+        val c = text(text.length - i)
+        result = multiply(toQuaternion(c), result)
+        if (out == result) {
+          return Some((n * text.length) + i)
+        }
+      }
     }
-    result
+    None
   }
 
 }
@@ -158,9 +164,9 @@ sealed trait Quaternions {
 
   import scala.math.abs
 
-  private val i = 2
-  private val j = 3
-  private val k = 4
+  private val i = toQuaternion('i')
+  private val j = toQuaternion('j')
+  private val k = toQuaternion('k')
 
   private val mult = Array(
     Array(0, 0, 0, 0, 0), //dummy for indexing
@@ -186,16 +192,22 @@ sealed trait Quaternions {
   }
 
   /**
-   * Multiply quaternions
-   * @param x char representation of 1st quaternion
-   * @param y char representation of 2nd quaternion
+   * Power value
+   * @param value value
+   * @param n power value
    * @return result
    */
-  final def multiply(x: Char, y: Char): Int = multiply(toQuaternion(x), toQuaternion(y))
+  final def pow(value: Int, n: Int) = {
+    var all = 1
+    for (i <- 0 until n) {
+      all = multiply(all, value)
+    }
+    all
+  }
 
   /**
    * Convert char into quaternion according to multiplicative table
-   * @param c char
+   * @param c char representation of quaternion
    * @return quaternion value
    */
   final def toQuaternion(c: Char): Int = c.toInt - ('i'.toInt - 2)
