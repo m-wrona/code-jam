@@ -56,7 +56,7 @@ trait Dijkstra extends Quaternions {
    * @return check result
    */
   final def canReduce(text: Array[Char], repeated: Long = 1): Boolean = {
-    //count whole result - as text is repeated up to 3 mul must be made
+    //count whole result - as text is repeated up to 4 repetitions must be made
     val limit: Int = 4
     val part = text.foldLeft(1)((v: Int, c: Char) => multiply(v, Quaternions(c)))
     val all = (0 until (repeated % limit).toInt).foldLeft(1)((total, i) => multiply(total, part))
@@ -67,9 +67,9 @@ trait Dijkstra extends Quaternions {
           Pi => {
             matchBwd('k', text, limit)
               .map(
-                Pk => {
-                  val totalPk = (text.length * repeated) - Pk
-                  Pi < totalPk
+                endPk => {
+                  val Pk = (text.length * repeated) - endPk
+                  Pi < Pk
                 }
               )
           }
