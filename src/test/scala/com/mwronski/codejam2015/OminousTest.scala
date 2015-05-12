@@ -59,7 +59,28 @@ with Ominous {
         Then("all tasks are solved correctly")
         var nr = 0
         for (expected <- out.map(_.split(":")(1).trim)) {
-          println(nr)
+          solutions(nr) should be(expected)
+          nr += 1
+        }
+      }
+
+      it("Should solve large tasks") {
+        Given("large tasks")
+        val in = Source.fromFile("src/test/resources/2015/D-large-practice.in").getLines()
+        in.next() //skip line with number of test cases
+        And("solutions for large tasks ")
+        val out = Source.fromFile("src/test/resources/2015/D-large-practice.out").getLines()
+
+        When("solving large tasks")
+        val solutions = scala.collection.mutable.ArrayBuffer[String]()
+        while (in.hasNext) {
+          val data = in.next().split(" ").map(_.toInt)
+          solutions += whoWins(data(0), data(1), data(2))
+        }
+
+        Then("all tasks are solved correctly")
+        var nr = 0
+        for (expected <- out.map(_.split(":")(1).trim)) {
           solutions(nr) should be(expected)
           nr += 1
         }

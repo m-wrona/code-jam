@@ -1,5 +1,7 @@
 package com.mwronski.codejam2015
 
+import scala.math._
+
 /**
  * An N-omino is a two-dimensional shape formed by joining N unit cells fully along
  * their edges in some way. More formally, a 1-omino is a 1x1 unit square, and an
@@ -37,24 +39,32 @@ trait Ominous {
    * @return non-nullable name of winning person
    */
   final def whoWins(x: Int, r: Int, c: Int): String = {
-    val space = r * c
-    //Richard puts his X-ominoes
-    val left = space - x
+    //check generic scenarios
     if (x >= 7) {
       //ominoes can contain the gap in the center that cannot by never filled
       return richard
-    } else if (left > 0 && left % x == 0) {
-      //enough space - do checks of some special cases
-      if (canCreateGap(x, r) || canCreateGap(x, c)) {
-        return richard
-      }
-      return gabriel
-    } else {
+    } else if ((r * c) % x != 0) {
       //no enough space
-      richard
+      return richard
+    }
+    //check detail scenarios
+    val s = min(r, c)
+    val l = max(r, c)
+    if (x == 3 && s == 1) {
+      return richard
+    } else if (x == 4 && s <= 2) {
+      return richard
+    } else if (x == 5 && s <= 2) {
+      return richard
+    } else if (x == 5 && s == 3 && l == 5) {
+      return richard
+    } else if (x == 6 && s <= 3) {
+      return richard
+    }
+    else {
+      //no enough space
+      gabriel
     }
   }
-
-  private def canCreateGap(x: Int, size: Int): Boolean = x - size >= 1
 
 }
