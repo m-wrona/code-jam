@@ -1,4 +1,4 @@
-package com.mwronski.codejam2015
+package com.mwronski.codejam2015.qualification
 
 import scala.math._
 

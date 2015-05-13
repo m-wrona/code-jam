@@ -1,6 +1,6 @@
-package com.mwronski.codejam2015.io
+package com.mwronski.codejam2015.qualification.io
 
-import org.scalatest.{Matchers, GivenWhenThen, FunSpec}
+import org.scalatest.{FunSpec, GivenWhenThen, Matchers}
 
 /**
  * Test cases for parsing data related with tasks

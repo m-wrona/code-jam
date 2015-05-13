@@ -1,4 +1,4 @@
-package com.mwronski.codejam2015.io
+package com.mwronski.codejam2015.qualification.io
 
 /**
  * Parser for standing ovation input data.

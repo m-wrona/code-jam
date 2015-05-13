@@ -1,4 +1,4 @@
-package com.mwronski.codejam2015
+package com.mwronski.codejam2015.qualification
 
 /**
  * It's opening night at the opera, and your friend is the prima donna (the lead female singer).

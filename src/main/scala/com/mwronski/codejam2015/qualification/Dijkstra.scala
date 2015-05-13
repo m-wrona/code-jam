@@ -1,4 +1,4 @@
-package com.mwronski.codejam2015
+package com.mwronski.codejam2015.qualification
 
 /**
  * The Dutch computer scientist Edsger Dijkstra made many important contributions to the field,
@@ -154,8 +154,9 @@ object Quaternions {
 
 sealed trait Quaternions {
 
-  import Quaternions._
-  import scala.math.abs
+  import com.mwronski.codejam2015.qualification.Quaternions._
+
+import scala.math.abs
 
   /**
    * Multiply quaternions

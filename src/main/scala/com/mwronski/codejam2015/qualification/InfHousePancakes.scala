@@ -1,4 +1,4 @@
-package com.mwronski.codejam2015
+package com.mwronski.codejam2015.qualification
 
 /**
  * At the Infinite House of Pancakes, there are only finitely many pancakes,

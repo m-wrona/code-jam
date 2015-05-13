@@ -1,8 +1,8 @@
-package com.mwronski.codejam2015
+package com.mwronski.codejam2015.qualification
 
-import com.mwronski.codejam2015.io.StandingOvationTask
+import com.mwronski.codejam2015.qualification.io.StandingOvationTask
 import com.mwronski.test.TestUtils
-import org.scalatest.{Matchers, GivenWhenThen, FunSpec}
+import org.scalatest.{FunSpec, GivenWhenThen, Matchers}
 
 import scala.io.Source
 
@@ -58,9 +58,9 @@ with StandingOvation {
 
       it("Should solve small tasks") {
         Given("small tasks")
-        val in = StandingOvationTask(Source.fromFile("src/test/resources/2015/A-small-practice.in").getLines())
+        val in = StandingOvationTask(Source.fromFile("src/test/resources/2015/qualification/A-small-practice.in").getLines())
         And("solutions for small tasks ")
-        val out = Source.fromFile("src/test/resources/2015/A-small-practice.out").getLines()
+        val out = Source.fromFile("src/test/resources/2015/qualification/A-small-practice.out").getLines()
 
         When("solving small tasks")
         val solutions = scala.collection.mutable.ArrayBuffer[Int]()
@@ -82,9 +82,9 @@ with StandingOvation {
 
       it("Should solve large tasks") {
         Given("large tasks")
-        val in = StandingOvationTask(Source.fromFile("src/test/resources/2015/A-large-practice.in").getLines())
+        val in = StandingOvationTask(Source.fromFile("src/test/resources/2015/qualification/A-large-practice.in").getLines())
         And("solutions for large tasks ")
-        val out = Source.fromFile("src/test/resources/2015/A-large-practice.out").getLines()
+        val out = Source.fromFile("src/test/resources/2015/qualification/A-large-practice.out").getLines()
 
         When("solving large tasks")
         val solutions = scala.collection.mutable.ArrayBuffer[Int]()
