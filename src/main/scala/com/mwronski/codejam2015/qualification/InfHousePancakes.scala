@@ -59,8 +59,9 @@ trait InfHousePancakes {
     limits
       .map(
         limit => {
+          //check how quickly pancakes will be eaten using given limit
           limit + pancakesCount
-            //check how quickly pancakes will be eaten using given limit
+            //time needed for splitting pancakes per eaters
             .map(pancakes => ((pancakes._1 - 1) / limit) * pancakes._2)
             .sum
         }

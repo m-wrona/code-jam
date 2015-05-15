@@ -47,7 +47,7 @@ trait Ominous {
       //no enough space
       return richard
     }
-    //check detail scenarios
+    //check detail scenarios per game
     val s = min(r, c)
     val l = max(r, c)
     if (x == 3 && s == 1) {
@@ -60,9 +60,7 @@ trait Ominous {
       return richard
     } else if (x == 6 && s <= 3) {
       return richard
-    }
-    else {
-      //no enough space
+    } else {
       gabriel
     }
   }
